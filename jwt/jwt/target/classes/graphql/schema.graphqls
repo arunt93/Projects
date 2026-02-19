@@ -1,0 +1,60 @@
+type Product {
+    id: ID!
+    name: String!
+    description: String
+    price: Float!
+    stock: Int!
+}
+
+input ProductInput {
+    name: String
+    description: String
+    price: Float
+    stock: Int
+}
+
+# Pagination types
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
+
+type ProductEdge {
+    cursor: String!
+    node: Product!
+}
+
+type ProductConnection {
+    edges: [ProductEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+input PaginationInput {
+    first: Int
+    after: String
+    last: Int
+    before: String
+    offset: Int = 0
+    limit: Int = 10
+}
+
+type Query {
+    # Cursor-based pagination (recommended)
+    products(first: Int, after: String): ProductConnection!
+    
+    # Offset-based pagination (simpler)
+    productsPaginated(offset: Int = 0, limit: Int = 10): ProductConnection!
+    
+    # Original query (kept for backward compatibility)
+    allProducts: [Product!]!
+    product(id: ID!): Product
+}
+
+type Mutation {
+    createProduct(input: ProductInput!): Product!
+    updateProduct(id: ID!, input: ProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
+}
